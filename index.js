@@ -131,7 +131,19 @@ async function fetchAndPrintCorporateActions() {
     }
 
     printSection("Corporate Actions");
-    printKV("Latest", normalizeCorporateActionsLatest(actions));
+    const latest = normalizeCorporateActionsLatest(actions);
+    if (latest) {
+      printKV("Symbol", latest.symbol);
+      printKV("Company", latest.comp);
+      printKV("Subject", latest.subject);
+      printKV("Ex Date", latest.exDate);
+      printKV("Record Date", latest.recDate);
+      printKV("Series", latest.series);
+      printKV("Face Value", latest.faceVal);
+      printKV("ISIN", latest.isin);
+    } else {
+      printKV("Latest", "No corporate actions found");
+    }
   } catch (err) {
     printApiError("corporate-actions", err);
   }
