@@ -33,6 +33,10 @@ node screenerCli.js <input-file> --json
 
 Example: `node screenerCli.js screener-input.txt`
 
+### Use with Stock Decision Engine
+
+After running the tools above (for example `node index.js` or `node screenerCli.js`), paste the output into the custom-built GPT named "Stock Decision Engine" available at https://chatgpt.com/g/g-69652e719608819186eefb24890e72f0-stock-decision-engine to get decision insights and recommendations.
+
 ## Manual
 
 ```bash

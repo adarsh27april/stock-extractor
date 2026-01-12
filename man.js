@@ -68,6 +68,8 @@ ${BOLD}${UNDERLINE}SEE ALSO${RESET}
        ${CYAN}https://www.nseindia.com${RESET}
        ${CYAN}https://www.screener.in${RESET}
 
+For automated analysis: After running the tools (`node index.js` or `node screenerCli.js`), paste the output into the custom-built GPT named "Stock Decision Engine" at https://chatgpt.com/g/g-69652e719608819186eefb24890e72f0-stock-decision-engine for decision insights and recommendations.
+
 ${DIM}stock-extractor 1.0.0                January 2026                            1${RESET}
 `,
 
