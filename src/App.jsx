@@ -9,6 +9,10 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [yahooLoading, setYahooLoading] = useState(false)
+  
+  // Holdings state (optional)
+  const [quantity, setQuantity] = useState('')
+  const [buyPrice, setBuyPrice] = useState('')
 
   const handleExtract = async () => {
     setError(null)
@@ -67,6 +71,16 @@ function App() {
     // Add screener data
     const { screener, yahoo } = output
     
+    // Add holdings if provided
+    const holdings = calculateHoldings(getCMP())
+    if (holdings) {
+      text += `── YOUR HOLDINGS ──\n`
+      Object.entries(holdings).forEach(([key, value]) => {
+        text += `${key}: ${value ?? 'N/A'}\n`
+      })
+      text += '\n'
+    }
+    
     const sections = [
       { title: 'PRICE & VOLUME', data: { ...screener.priceVolume, ...(yahoo || {}) } },
       { title: 'VALUATION', data: screener.valuation },
@@ -105,14 +119,15 @@ function App() {
     return <span className={className}>{value}</span>
   }
 
-  const renderDataGroup = (title, data, source = null) => {
+  const renderDataGroup = (title, data, options = {}) => {
     if (!data) return null
     
+    const { source, className } = options
     const entries = Object.entries(data).filter(([_, v]) => v !== undefined)
     if (entries.length === 0) return null
 
     return (
-      <div className="data-group">
+      <div className={`data-group ${className || ''}`}>
         <div className="group-title">
           {title}
           {source && <span className={`source-badge ${source.toLowerCase()}`}>{source}</span>}
@@ -125,6 +140,34 @@ function App() {
         ))}
       </div>
     )
+  }
+
+  // Calculate holdings P&L
+  const calculateHoldings = (cmp) => {
+    const qty = parseFloat(quantity)
+    const avgPrice = parseFloat(buyPrice)
+    
+    if (!qty || !avgPrice || !cmp) return null
+    
+    const investedValue = qty * avgPrice
+    const currentValue = qty * cmp
+    const pnlAmount = currentValue - investedValue
+    const pnlPercent = ((pnlAmount / investedValue) * 100).toFixed(2)
+    
+    return {
+      'Quantity': qty.toLocaleString('en-IN'),
+      'Avg Buy Price': `₹${avgPrice.toFixed(2)}`,
+      'Invested Value': `₹${investedValue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`,
+      'Current Value': `₹${currentValue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`,
+      'P&L': `${pnlAmount >= 0 ? '+' : ''}₹${pnlAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 })} (${pnlAmount >= 0 ? '+' : ''}${pnlPercent}%)`
+    }
+  }
+
+  // Get CMP from parsed data
+  const getCMP = () => {
+    if (!output?.screener?.priceVolume?.['Current Market Price']) return null
+    const cmpStr = output.screener.priceVolume['Current Market Price']
+    return parseFloat(cmpStr.replace(/[₹,]/g, ''))
   }
 
   return (
@@ -161,6 +204,30 @@ function App() {
           />
           <span className="char-count">{screenerText.length.toLocaleString()} chars</span>
         </div>
+
+        {/* Optional Holdings Inputs */}
+        <div className="holdings-inputs">
+          <span className="holdings-label">Your Holdings (optional)</span>
+          <div className="holdings-row">
+            <input
+              type="number"
+              className="holdings-input"
+              placeholder="Qty"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              min="0"
+            />
+            <input
+              type="number"
+              className="holdings-input"
+              placeholder="Buy Price ₹"
+              value={buyPrice}
+              onChange={(e) => setBuyPrice(e.target.value)}
+              min="0"
+              step="0.01"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="output-section">
@@ -190,6 +257,9 @@ function App() {
           
           {output && (
             <>
+              {/* Your Holdings - Show first if provided */}
+              {(quantity && buyPrice) && renderDataGroup('Your Holdings', calculateHoldings(getCMP()), { className: 'holdings-group' })}
+              
               {/* Price & Volume - Combined from screener + yahoo */}
               {renderDataGroup('Price & Volume', {
                 ...output.screener.priceVolume,

@@ -158,6 +158,64 @@ body {
 }
 
 /* =============================================================================
+   Holdings Inputs
+   ============================================================================= */
+
+.holdings-inputs {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.holdings-label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.holdings-row {
+  display: flex;
+  gap: 8px;
+}
+
+.holdings-input {
+  flex: 1;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.holdings-input:focus {
+  border-color: var(--accent);
+}
+
+.holdings-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Hide number input spinners */
+.holdings-input::-webkit-outer-spin-button,
+.holdings-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.holdings-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* =============================================================================
    Output Section
    ============================================================================= */
 
@@ -238,6 +296,19 @@ body {
 
 .data-group:last-child {
   margin-bottom: 0;
+}
+
+/* Holdings section highlight */
+.data-group.holdings-group {
+  background: rgba(251, 191, 36, 0.05);
+  margin: -16px -16px 20px -16px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-group.holdings-group .group-title {
+  color: var(--warning);
+  border-bottom-color: rgba(251, 191, 36, 0.3);
 }
 
 .group-title {
